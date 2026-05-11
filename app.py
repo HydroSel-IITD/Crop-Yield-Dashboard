@@ -212,6 +212,7 @@ def get_base64_img(file_path):
 # Load assets for the banner
 bg_b64 = get_base64_img("bg.png")
 logo_b64 = get_base64_img("logo.png")
+logo_b64_2 = get_base64_img("iitdlogo.png")
 
 banner_html = f"""
 <div style="
@@ -251,7 +252,7 @@ banner_html = f"""
         </h2>
     </div>
 
-    <img src="data:image/png;base64,{logo_b64}" style="width: 100px; height: auto;">
+    <img src="data:image/png;base64,{logo_b64_2}" style="width: 100px; height: auto;">
 </div>
 """
 

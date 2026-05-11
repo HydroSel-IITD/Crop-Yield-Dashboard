@@ -32,9 +32,54 @@ st.markdown("""
     background-color: #0e1117;
 }
 
-/* Sidebar */
+/* Sidebar full background */
 section[data-testid="stSidebar"] {
     background-color: #111827 !important;
+}
+
+/* ALL sidebar containers */
+section[data-testid="stSidebar"] > div {
+    background-color: #111827 !important;
+}
+
+/* Sidebar expanders / blocks */
+section[data-testid="stSidebar"] .stSelectbox,
+section[data-testid="stSidebar"] .stMultiSelect,
+section[data-testid="stSidebar"] .stCheckbox,
+section[data-testid="stSidebar"] .stRadio,
+section[data-testid="stSidebar"] .stMarkdown,
+section[data-testid="stSidebar"] .stSlider {
+    background-color: #111827 !important;
+    color: white !important;
+}
+
+/* Fix white selectbox issue in LIGHT MODE */
+section[data-testid="stSidebar"] div[data-baseweb="select"] {
+    background-color: #1f2937 !important;
+    color: white !important;
+    border-radius: 8px !important;
+    border: 1px solid #374151 !important;
+}
+
+/* Selected value */
+section[data-testid="stSidebar"] div[data-baseweb="select"] span {
+    color: white !important;
+}
+
+/* Dropdown menu */
+div[role="listbox"] {
+    background-color: #1f2937 !important;
+}
+
+/* Dropdown options */
+div[role="option"] {
+    background-color: #1f2937 !important;
+    color: white !important;
+}
+
+/* Hover effect */
+div[role="option"]:hover {
+    background-color: #374151 !important;
 }
 
 /* Sidebar labels/text */
@@ -44,7 +89,6 @@ section[data-testid="stSidebar"] span,
 section[data-testid="stSidebar"] div {
     color: #f9fafb !important;
 }
-
 /* Sidebar title */
 section[data-testid="stSidebar"] h1,
 section[data-testid="stSidebar"] h2,
@@ -120,7 +164,29 @@ header {
 .block-container {
     padding-top: 0.35rem;
 }
+/* FORCE DARK INPUT BACKGROUND IN SIDEBAR */
+section[data-testid="stSidebar"] .stSelectbox > div > div,
+section[data-testid="stSidebar"] .stMultiSelect > div > div,
+section[data-testid="stSidebar"] div[data-baseweb="select"] > div {
+    background-color: #1f2937 !important;
+    color: white !important;
+}
 
+/* Fix selected text */
+section[data-testid="stSidebar"] input,
+section[data-testid="stSidebar"] textarea {
+    color: white !important;
+}
+
+/* Force dropdown arrow color */
+section[data-testid="stSidebar"] svg {
+    fill: white !important;
+}
+
+/* Entire widget container */
+section[data-testid="stSidebar"] .stSelectbox {
+    background-color: transparent !important;
+}
 </style>
 """, unsafe_allow_html=True)
 
@@ -216,12 +282,12 @@ df = load_crop_data()
 # -------------------------------------------------
 st.sidebar.title("India Crop Yield Dashboard")
 
-apply_filters = st.sidebar.checkbox("Apply Filters")
+
 
 year = st.sidebar.selectbox("Year", sorted(df["Crop_Year"].unique()))
 crop = st.sidebar.selectbox("Crop", sorted(df["Crop"].unique()))
 season = st.sidebar.selectbox("Season", sorted(df["Season"].unique()))
-
+apply_filters = st.sidebar.checkbox("Apply Filters")
 st.sidebar.markdown("---")
 
 map_style = st.sidebar.selectbox(
@@ -379,50 +445,102 @@ if apply_filters:
         ).add_to(m)
 
         legend_html = f"""
+<div style="
+    position: fixed;
+    bottom: 55px;
+    right: 12px;
+    z-index: 9999;
+    background-color: rgba(255,255,255,0.95);
+    padding: 9px 11px;
+    border-radius: 7px;
+    box-shadow: 1px 2px 6px rgba(0,0,0,0.25);
+    font-family: Arial, sans-serif;
+    font-size: 10px;
+    width: 205px;
+    line-height: 1.2;
+    color: black;
+">
+
+    <div style="
+        font-size:12px;
+        font-weight:700;
+        margin-bottom:6px;
+        color:#111827;">
+        Crop Yield
+    </div>
+
+    <div style="display:flex; align-items:center; margin-bottom:4px;">
         <div style="
-            position: fixed;
-            bottom: 90px;
-            left: 10px;
-            z-index: 9999;
-            background-color: white;
-            padding: 12px 16px;
-            border-radius: 8px;
-            box-shadow: 2px 2px 6px rgba(0,0,0,0.3);
-            font-family: Arial, sans-serif;
-            font-size: 13px;
-            min-width: 210px;
-            color: black;
-        ">
-            <b style="font-size:14px; color:black;">Crop Yield</b>
-            <span style="font-size:11px; color:#555; margin-left:4px;">(tonnes/hectare)</span><br>
-            <span style="font-size:10px; color:#888;">(percentile scale)</span><br>
-            <div style="margin-top:8px;">
-                <div style="display:flex; align-items:center; margin-bottom:5px;">
-                    <div style="width:20px;height:14px;background:#ffffe5;border:1px solid #ccc;margin-right:8px;flex-shrink:0;"></div>
-                    <span style="color:black;">0–25th pct  (< {round(p25, 2)} t/ha)</span>
-                </div>
-                <div style="display:flex; align-items:center; margin-bottom:5px;">
-                    <div style="width:20px;height:14px;background:#d9f0a3;border:1px solid #ccc;margin-right:8px;flex-shrink:0;"></div>
-                    <span style="color:black;">25–50th pct  ({round(p25, 2)} – {round(p50, 2)} t/ha)</span>
-                </div>
-                <div style="display:flex; align-items:center; margin-bottom:5px;">
-                    <div style="width:20px;height:14px;background:#78c679;border:1px solid #ccc;margin-right:8px;flex-shrink:0;"></div>
-                    <span style="color:black;">50–75th pct  ({round(p50, 2)} – {round(p75, 2)} t/ha)</span>
-                </div>
-                <div style="display:flex; align-items:center; margin-bottom:5px;">
-                    <div style="width:20px;height:14px;background:#238443;border:1px solid #ccc;margin-right:8px;flex-shrink:0;"></div>
-                    <span style="color:black;">75–95th pct  ({round(p75, 2)} – {round(p95, 2)} t/ha)</span>
-                </div>
-                <div style="display:flex; align-items:center;">
-                    <div style="width:20px;height:14px;background:#005a32;border:1px solid #ccc;margin-right:8px;flex-shrink:0;"></div>
-                    <span style="color:black;">> 95th pct  ({round(p95, 2)}+ t/ha)</span>
-                </div>
-            </div>
-            <div style="margin-top:8px; font-size:10px; color:#888;">
-                Outliers capped at 95th percentile
-            </div>
-        </div>
-        """
+            width:14px;
+            height:11px;
+            background:#fff7bc;
+            border:1px solid #bbb;
+            margin-right:6px;"></div>
+
+        <span>
+            0–25% 
+            (<b>{round(p25,2)}</b> t/ha)
+        </span>
+    </div>
+
+    <div style="display:flex; align-items:center; margin-bottom:4px;">
+        <div style="
+            width:14px;
+            height:11px;
+            background:#d9f0a3;
+            border:1px solid #bbb;
+            margin-right:6px;"></div>
+
+        <span>
+            25–50%
+            (<b>{round(p25,2)}–{round(p50,2)}</b>)
+        </span>
+    </div>
+
+    <div style="display:flex; align-items:center; margin-bottom:4px;">
+        <div style="
+            width:14px;
+            height:11px;
+            background:#78c679;
+            border:1px solid #bbb;
+            margin-right:6px;"></div>
+
+        <span>
+            50–75%
+            (<b>{round(p50,2)}–{round(p75,2)}</b>)
+        </span>
+    </div>
+
+    <div style="display:flex; align-items:center; margin-bottom:4px;">
+        <div style="
+            width:14px;
+            height:11px;
+            background:#31a354;
+            border:1px solid #bbb;
+            margin-right:6px;"></div>
+
+        <span>
+            75–95%
+            (<b>{round(p75,2)}–{round(p95,2)}</b>)
+        </span>
+    </div>
+
+    <div style="display:flex; align-items:center;">
+        <div style="
+            width:14px;
+            height:11px;
+            background:#006d2c;
+            border:1px solid #bbb;
+            margin-right:6px;"></div>
+
+        <span>
+            &gt;95%
+            (<b>{round(p95,2)}+</b>)
+        </span>
+    </div>
+
+</div>
+"""
         m.get_root().html.add_child(folium.Element(legend_html))
 
 # -------------------------------------------------
